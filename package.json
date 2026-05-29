@@ -1,0 +1,14 @@
+{
+  "name": "elasticsearch-nodejs-server",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install:all": "npm --prefix server install && npm --prefix client install",
+    "dev": "concurrently -k \"npm --prefix server run dev\" \"npm --prefix client start\"",
+    "start": "concurrently -k \"npm --prefix server run start\" \"npm --prefix client start\"",
+    "build": "npm --prefix client run build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
