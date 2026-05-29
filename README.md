@@ -1,8 +1,8 @@
 # About
 
-- **Description:** A simple integration of an elasticsearch node into a nodejs server, which filters the data integrated into elasticsearch. The data source in this mini-project is Fortinet, which sends real-time logs into elasticsearch via Filebeat.
-- **Type:** Web server (Node server)
-- **Language or techno:** Javascript, NodeJS, ExpressJS
+- **Description:** Elasticsearch-backed Node.js service with a modern React client to search and explore syslog data.
+- **Type:** Web server + client UI
+- **Language or techno:** Javascript, NodeJS, ExpressJS, React
 
 ## Contributor
 
@@ -12,8 +12,44 @@
 
 ### Running the project
 
-- **Run:** `node elasticsearch.js`
-- **Run:** `node testElactisearch.js`
+#### Root scripts (recommended)
+
+- **Install all deps:** `npm run install:all`
+- **Run dev (server + client):** `npm run dev`
+- **Run start (server + client):** `npm run start`
+- **Build client:** `npm run build`
+
+#### Server only
+
+- **Install server deps:** `cd server && npm install`
+- **Run server:** `npm run start`
+- **Run dev server:** `npm run dev`
+- **Run test script:** `npm run test`
+
+#### Client only
+
+- **Install client deps:** `cd client && npm install`
+- **Run client:** `npm run start`
+- **Build client:** `npm run build`
+
+### Configuration
+
+Create a `.env` file inside the `server` folder. You can copy from `server/.env.example` and set the values for your cluster.
+
+Key variables:
+
+- `ES_NODE` (ex: `https://localhost:9200`)
+- `ES_API_KEY` or `ES_USERNAME`/`ES_PASSWORD`
+- `ES_CA_CERT_PATH` (optional)
+- `ES_REJECT_UNAUTHORIZED` (default: true)
+
+### REST API
+
+- `GET /api/health`
+- `GET /api/indices?index=*&includeHidden=false`
+- `GET /api/search?index=my-index&q=my%20query&fields=message,source&size=10&from=0&mode=match`
+- Pagination (page/perPage): `GET /api/search?index=my-index&q=error&page=2&perPage=25`
+- Cursor pagination (search_after): `GET /api/search?index=my-index&q=error&sortField=@timestamp&sortOrder=desc&searchAfter=1690896000000`
 
 #### Configuring elasticsearch 
 

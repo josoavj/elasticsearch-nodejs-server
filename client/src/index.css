@@ -1,13 +1,37 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700&family=Space+Grotesk:wght@400;600;700&display=swap");
+
+:root {
+  --text-primary: #f6f4ff;
+  --text-muted: #9ba3c5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: "Manrope", system-ui, sans-serif;
+  background: radial-gradient(circle at top, #1b2345, #0a0f1f 50%, #05070f 100%);
+  color: var(--text-primary);
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+h1,
+h2,
+h3 {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+button,
+input,
+select {
+  font-family: "Manrope", system-ui, sans-serif;
 }
