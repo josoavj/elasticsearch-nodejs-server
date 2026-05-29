@@ -1,8 +1,8 @@
 # About
 
-- **Description:** A simple integration of an elasticsearch node into a nodejs server, which filters the data integrated into elasticsearch. The data source in this mini-project is Fortinet, which sends real-time logs into elasticsearch via Filebeat.
-- **Type:** Web server (Node server)
-- **Language or techno:** Javascript, NodeJS, ExpressJS
+- **Description:** Elasticsearch-backed Node.js service with a modern React client to search and explore syslog data.
+- **Type:** Web server + client UI
+- **Language or techno:** Javascript, NodeJS, ExpressJS, React
 
 ## Contributor
 
@@ -12,14 +12,36 @@
 
 ### Running the project
 
+#### Root scripts (recommended)
+
+- **Install all deps:** `npm run install:all`
+- **Run dev (server + client):** `npm run dev`
+- **Run start (server + client):** `npm run start`
+- **Build client:** `npm run build`
+
+#### Server only
+
 - **Install server deps:** `cd server && npm install`
 - **Run server:** `npm run start`
 - **Run dev server:** `npm run dev`
 - **Run test script:** `npm run test`
 
+#### Client only
+
+- **Install client deps:** `cd client && npm install`
+- **Run client:** `npm run start`
+- **Build client:** `npm run build`
+
 ### Configuration
 
 Create a `.env` file inside the `server` folder. You can copy from `server/.env.example` and set the values for your cluster.
+
+Key variables:
+
+- `ES_NODE` (ex: `https://localhost:9200`)
+- `ES_API_KEY` or `ES_USERNAME`/`ES_PASSWORD`
+- `ES_CA_CERT_PATH` (optional)
+- `ES_REJECT_UNAUTHORIZED` (default: true)
 
 ### REST API
 
