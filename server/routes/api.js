@@ -1,6 +1,7 @@
 const express = require("express");
 const { z } = require("zod");
 const client = require("../esClient");
+const { mapSyslog } = require("../mappers/syslogMapper");
 
 const router = express.Router();
 
@@ -55,6 +56,7 @@ const searchQuerySchema = z
     sortOrder: z.enum(["asc", "desc"]).optional(),
     searchAfter: z.string().optional(),
     trackTotalHits: z.coerce.boolean().optional(),
+    normalize: z.coerce.boolean().optional(),
   })
   .strict();
 
@@ -119,6 +121,7 @@ router.get("/search", async (req, res, next) => {
       sortOrder,
       searchAfter,
       trackTotalHits,
+      normalize,
     } = parsed.data;
 
     const parsedFields = String(fields || "message")
@@ -189,9 +192,11 @@ router.get("/search", async (req, res, next) => {
       : payload.hits.total;
     const lastHit = payload.hits.hits[payload.hits.hits.length - 1];
     const nextSearchAfter = lastHit && lastHit.sort ? lastHit.sort : undefined;
+    const normalizeOutput = normalize !== undefined ? normalize : true;
+    const hits = normalizeOutput ? payload.hits.hits.map(mapSyslog) : payload.hits.hits;
     res.json({
       hitsCount: total,
-      hits: payload.hits.hits,
+      hits,
       page: searchAfterValues ? undefined : page || Math.floor(normalizedFrom / normalizedSize) + 1,
       perPage: searchAfterValues ? undefined : normalizedSize,
       from: searchAfterValues ? undefined : normalizedFrom,

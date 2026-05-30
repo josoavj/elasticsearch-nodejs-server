@@ -5,8 +5,7 @@
   "main": "elasticsearch.js",
   "scripts": {
     "start": "node elasticsearch.js",
-    "dev": "nodemon elasticsearch.js",
-    "test": "node testAXIOSElasticsearch.js"
+    "dev": "nodemon elasticsearch.js"
   },
   "author": "=Josoa Vonjiniaina <josoavonjiniaina13@gmail.com>",
   "license": "ISC",
