@@ -6,6 +6,9 @@ const buildClientOptions = () => {
   const options = {
     node: config.es.node,
     requestTimeout: config.es.requestTimeout,
+    maxRetries: config.es.maxRetries,
+    sniffOnStart: config.es.sniffOnStart,
+    sniffInterval: config.es.sniffInterval > 0 ? config.es.sniffInterval : false,
   };
 
   if (config.es.apiKey) {
