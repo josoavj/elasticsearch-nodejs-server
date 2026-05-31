@@ -1,12 +1,43 @@
 {
   "name": "elasticsearch-nodejs-server",
   "version": "1.0.0",
+  "description": "Elasticsearch-backed Node.js server with a React client to search and explore syslog data.",
   "private": true,
+  "keywords": [
+    "elasticsearch",
+    "syslog",
+    "nodejs",
+    "express",
+    "react"
+  ],
+  "author": {
+    "name": "josoavj",
+    "url": "https://github.com/josoavj"
+  },
+  "contributors": [
+    {
+      "name": "Haritsimba",
+      "url": "https://github.com/haritsimba"
+    }
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/josoavj/elasticsearch-nodejs-server"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "scripts": {
     "install:all": "npm --prefix server install && npm --prefix client install",
-    "dev": "concurrently -k \"npm --prefix server run dev\" \"npm --prefix client start\"",
-    "start": "concurrently -k \"npm --prefix server run start\" \"npm --prefix client start\"",
-    "build": "npm --prefix client run build"
+    "dev": "concurrently -k --names \"server,client\" --prefix-colors \"cyan,magenta\" \"npm --prefix server run dev\" \"npm --prefix client start\"",
+    "start": "concurrently -k --names \"server,client\" --prefix-colors \"cyan,magenta\" \"npm --prefix server run start\" \"npm --prefix client start\"",
+    "build": "npm --prefix client run build",
+    "build:prod": "npm --prefix client run build -- --mode production",
+    "lint": "npm --prefix server run lint && npm --prefix client run lint",
+    "clean": "rm -rf server/node_modules client/node_modules node_modules",
+    "reinstall": "npm run clean && npm run install:all"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
