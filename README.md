@@ -1,68 +1,141 @@
-# About
+# 🔍 Syslog Explorer
 
-- **Description:** Elasticsearch-backed Node.js service with a modern React client to search and explore syslog data.
-- **Type:** Web server + client UI
-- **Language or techno:** Javascript, NodeJS, ExpressJS, React
+> Elasticsearch-backed Node.js server with a modern React client to search and explore syslog data.
 
-## Contributor
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat&logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?style=flat&logo=express&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?style=flat&logo=react&logoColor=black)
+![Elasticsearch](https://img.shields.io/badge/Elasticsearch-005571?style=flat&logo=elasticsearch&logoColor=white)
 
-- **[josoavj](https://github.com/josoavj)**
-- **[Haritsimba](https://github.com/haritsimba)**
+---
 
+## 📋 Table of contents
 
-### Running the project
+- [Getting started](#-getting-started)
+- [Configuration](#-configuration)
+- [REST API](#-rest-api)
+- [Server architecture](#-server-architecture)
+- [Elastic stack setup](#-elastic-stack-setup)
+- [Contributors](#-contributors)
 
-#### Root scripts (recommended)
+---
 
-- **Install all deps:** `npm run install:all`
-- **Run dev (server + client):** `npm run dev`
-- **Run start (server + client):** `npm run start`
-- **Build client:** `npm run build`
+## 🚀 Getting started
 
-#### Server only
+### Root scripts *(recommended)*
 
-- **Install server deps:** `cd server && npm install`
-- **Run server:** `npm run start`
-- **Run dev server:** `npm run dev`
+Run both server and client from the project root:
 
-#### Client only
+| Command | Description |
+|---|---|
+| `npm run install:all` | Install all dependencies |
+| `npm run dev` | Run server + client in dev mode |
+| `npm run start` | Run server + client in production |
+| `npm run build` | Build the client |
 
-- **Install client deps:** `cd client && npm install`
-- **Run client:** `npm run start`
-- **Build client:** `npm run build`
+### Server only
 
-### Configuration
+```bash
+cd server && npm install   # Install dependencies
+npm run dev                # Development mode
+npm run start              # Production mode
+```
 
-Create a `.env` file inside the `server` folder. You can copy from `server/.env.example` and set the values for your cluster.
+### Client only
 
-Key variables:
+```bash
+cd client && npm install   # Install dependencies
+npm run start              # Start client
+npm run build              # Build for production
+```
 
-- `ES_NODE` (ex: `https://localhost:9200`)
-- `ES_API_KEY` or `ES_USERNAME`/`ES_PASSWORD`
-- `ES_CA_CERT_PATH` (optional)
-- `ES_REJECT_UNAUTHORIZED` (default: true)
+---
 
-### REST API
+## ⚙️ Configuration
 
-- `GET /api/health`
-- `GET /api/indices?index=*&includeHidden=false`
-- `GET /api/search?index=my-index&q=my%20query&fields=message,source&size=10&from=0&mode=match`
-- Pagination (page/perPage): `GET /api/search?index=my-index&q=error&page=2&perPage=25`
-- Cursor pagination (search_after): `GET /api/search?index=my-index&q=error&sortField=@timestamp&sortOrder=desc&searchAfter=1690896000000`
-- Normalized syslog output (default): `GET /api/search?index=my-index&q=error`
-- Raw Elasticsearch output: `GET /api/search?index=my-index&q=error&normalize=false`
+Create a `.env` file inside the `server/` folder:
 
-### Server architecture
+```bash
+cp server/.env.example server/.env
+```
 
-Server entrypoint and core files:
+Then set the following variables:
 
-- `server/elasticsearch.js` : Express server bootstrap and error handling.
-- `server/esClient.js` : Elasticsearch client configuration (auth + TLS).
-- `server/config.js` : Environment-based config loader.
-- `server/routes/api.js` : REST API endpoints.
+| Variable | Description | Required |
+|---|---|---|
+| `ES_NODE` | Elasticsearch URL (e.g. `https://localhost:9200`) | ✅ |
+| `ES_API_KEY` | API key authentication | ✅ *(or user/pass)* |
+| `ES_USERNAME` | Basic auth username | ✅ *(or API key)* |
+| `ES_PASSWORD` | Basic auth password | ✅ *(or API key)* |
+| `ES_CA_CERT_PATH` | Path to TLS CA certificate | optional |
+| `ES_REJECT_UNAUTHORIZED` | Reject unauthorized TLS (default: `true`) | optional |
 
-#### Configuring elasticsearch 
+---
 
-- A short tutorial on setting up elastic stack (elasticsearch, Kibana, Beats or Filebeat) [goTo](https://github.com/josoavj/elasticsearch-config)
+## 🌐 REST API
 
-[![My Skills](https://skillicons.dev/icons?i=elasticsearch,nodejs,expressjs)](https://skillicons.dev)
+### Health check
+
+```
+GET /api/health
+```
+
+### List indices
+
+```
+GET /api/indices?index=*&includeHidden=false
+```
+
+### Search
+
+```
+GET /api/search?index=<index>&q=<query>&fields=message,source&size=10&from=0&mode=match
+```
+
+**Pagination options:**
+
+```bash
+# Offset pagination
+GET /api/search?index=my-index&q=error&page=2&perPage=25
+
+# Cursor pagination (search_after)
+GET /api/search?index=my-index&q=error&sortField=@timestamp&sortOrder=desc&searchAfter=1690896000000
+```
+
+**Output format:**
+
+```bash
+# Normalized syslog output (default)
+GET /api/search?index=my-index&q=error
+
+# Raw Elasticsearch output
+GET /api/search?index=my-index&q=error&normalize=false
+```
+
+---
+
+## 🏗️ Server architecture
+
+| File | Description |
+|---|---|
+| `server/elasticsearch.js` | Express server bootstrap and error handling |
+| `server/esClient.js` | Elasticsearch client — auth & TLS configuration |
+| `server/config.js` | Environment-based config loader |
+| `server/routes/api.js` | REST API endpoint definitions |
+
+---
+
+## 📚 Elastic stack setup
+
+A step-by-step guide to setting up the full Elastic stack (Elasticsearch, Kibana, Beats / Filebeat) is available here:
+
+👉 [elasticsearch-config](https://github.com/josoavj/elasticsearch-config)
+
+---
+
+## 👥 Contributors
+
+| | Username |
+|---|---|
+| [![josoavj](https://github.com/josoavj.png?size=40)](https://github.com/josoavj) | [@josoavj](https://github.com/josoavj) |
+| [![haritsimba](https://github.com/haritsimba.png?size=40)](https://github.com/haritsimba) | [@Haritsimba](https://github.com/haritsimba) |
