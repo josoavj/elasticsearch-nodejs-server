@@ -14,6 +14,7 @@
 - [Getting started](#-getting-started)
 - [Configuration](#-configuration)
 - [REST API](#-rest-api)
+- [Realtime stream](#-realtime-stream)
 - [Server architecture](#-server-architecture)
 - [Elastic stack setup](#-elastic-stack-setup)
 - [Contributors](#-contributors)
@@ -53,7 +54,7 @@ npm run build              # Build for production
 
 ## ⚙️ Configuration
 
-Create a `.env` file inside the `server/` folder:
+Create a `.env` file inside the `server/` folder (or inject env vars at runtime):
 
 ```bash
 cp server/.env.example server/.env
@@ -69,6 +70,63 @@ Then set the following variables:
 | `ES_PASSWORD` | Basic auth password | ✅ *(or API key)* |
 | `ES_CA_CERT_PATH` | Path to TLS CA certificate | optional |
 | `ES_REJECT_UNAUTHORIZED` | Reject unauthorized TLS (default: `true`) | optional |
+| `ES_REQUEST_TIMEOUT` | ES request timeout in ms | optional |
+| `ES_MAX_RETRIES` | ES retry count | optional |
+| `ES_SNIFF_ON_START` | Enable sniff on start | optional |
+| `ES_SNIFF_INTERVAL` | Sniff interval in ms (0 disables) | optional |
+| `ES_TRACK_TOTAL_HITS` | Default track_total_hits | optional |
+| `ES_TERMINATE_AFTER` | Default terminate_after | optional |
+| `ES_TERMINATE_AFTER_MAX` | Max terminate_after accepted | optional |
+| `ES_ALLOW_WILDCARDS` | Allow wildcard indices | optional |
+| `ES_ALLOWED_INDICES` | Comma-separated allowed indices | optional |
+| `ES_BREAKER_ENABLED` | Circuit breaker enabled | optional |
+| `ES_BREAKER_THRESHOLD` | Failures before breaker opens | optional |
+| `ES_BREAKER_RESET_MS` | Breaker reset window in ms | optional |
+| `RATE_LIMIT_WINDOW_MS` | Rate limit window in ms | optional |
+| `RATE_LIMIT_MAX` | Max requests per window | optional |
+| `CACHE_TTL_MS` | Cache TTL for /health and /indices | optional |
+| `CACHE_MAX_ENTRIES` | Cache max entries | optional |
+| `WS_POLL_INTERVAL_MS` | WebSocket poll interval | optional |
+| `WS_BATCH_SIZE` | WebSocket batch size | optional |
+
+### Secure options (recommended)
+
+#### 1) Runtime environment variables
+
+No secrets stored on disk, just inject when starting the server:
+
+```bash
+ES_NODE=https://localhost:9200 \
+ES_USERNAME=elastic \
+ES_PASSWORD=supersecret \
+npm --prefix server run dev
+```
+
+#### 3) Encrypted `.env` with dotenv-vault
+
+Use an encrypted `.env.vault` and only share the vault key with trusted members.
+
+```bash
+cd server
+npm run env:open   # opens the vault UI
+npm run env:push   # encrypt and push local .env into the vault
+npm run env:pull   # pull the encrypted env
+```
+
+Run with the vault key:
+
+```bash
+DOTENV_KEY=your_vault_key npm run env:run -- node elasticsearch.js
+```
+
+From the project root:
+
+```bash
+npm run vault:open
+npm run vault:push
+npm run vault:pull
+DOTENV_KEY=your_vault_key npm run vault:run -- node server/elasticsearch.js
+```
 
 ---
 
@@ -112,6 +170,23 @@ GET /api/search?index=my-index&q=error
 GET /api/search?index=my-index&q=error&normalize=false
 ```
 
+**Safety controls:**
+
+- `trackTotalHits` (optional) to override `ES_TRACK_TOTAL_HITS`
+- `terminateAfter` (optional) to cap heavy queries
+
+---
+
+## 📡 Realtime stream
+
+WebSocket endpoint for near real-time logs (polling Elasticsearch):
+
+```
+ws://localhost:3000/api/stream?index=filebeat-*&q=error
+```
+
+Optional parameters: `fields`, `mode`, `sortField`, `sortOrder`, `normalize`.
+
 ---
 
 ## 🏗️ Server architecture
@@ -122,6 +197,10 @@ GET /api/search?index=my-index&q=error&normalize=false
 | `server/esClient.js` | Elasticsearch client — auth & TLS configuration |
 | `server/config.js` | Environment-based config loader |
 | `server/routes/api.js` | REST API endpoint definitions |
+| `server/mappers/syslogMapper.js` | Normalized syslog mapper |
+| `server/validators.js` | API input safety checks |
+| `server/esGuard.js` | Circuit breaker + latency logging |
+| `server/logger.js` | Structured logging |
 
 ---
 
