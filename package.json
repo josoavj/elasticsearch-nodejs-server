@@ -37,7 +37,11 @@
     "build:prod": "npm --prefix client run build -- --mode production",
     "lint": "npm --prefix server run lint && npm --prefix client run lint",
     "clean": "rm -rf server/node_modules client/node_modules node_modules",
-    "reinstall": "npm run clean && npm run install:all"
+    "reinstall": "npm run clean && npm run install:all",
+    "vault:open": "npm --prefix server run env:open",
+    "vault:push": "npm --prefix server run env:push",
+    "vault:pull": "npm --prefix server run env:pull",
+    "vault:run": "npm --prefix server run env:run --"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
