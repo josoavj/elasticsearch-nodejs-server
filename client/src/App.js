@@ -12,6 +12,7 @@ const App = () => {
 	const [indices, setIndices] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
+	const [token, setToken] = useState("");
 
 	const [index, setIndex] = useState("filebeat-*");
 	const [query, setQuery] = useState("error");
@@ -31,6 +32,12 @@ const App = () => {
 	const [nextSearchAfter, setNextSearchAfter] = useState(null);
 
 	useEffect(() => {
+		const savedToken = window.localStorage.getItem("authToken") || "";
+		setToken(savedToken);
+		if (savedToken) {
+			api.defaults.headers.common.Authorization = `Bearer ${savedToken}`;
+		}
+
 		const loadMeta = async () => {
 			try {
 				const [healthResp, indicesResp] = await Promise.all([
@@ -115,6 +122,18 @@ const App = () => {
 	const onSubmit = (event) => {
 		event.preventDefault();
 		runSearch({ resetCursor: true, resetPage: true, pageOverride: 1, searchAfterOverride: "" });
+	};
+
+	const onTokenChange = (event) => {
+		const value = event.target.value.trim();
+		setToken(value);
+		if (value) {
+			api.defaults.headers.common.Authorization = `Bearer ${value}`;
+			window.localStorage.setItem("authToken", value);
+		} else {
+			delete api.defaults.headers.common.Authorization;
+			window.localStorage.removeItem("authToken");
+		}
 	};
 
 	const onNextPage = () => {
@@ -277,6 +296,15 @@ const App = () => {
 								onChange={(event) => setSearchAfter(event.target.value)}
 								placeholder="auto-set after first search"
 								disabled={!useCursor}
+							/>
+						</div>
+						<div className="field field--wide">
+							<label>JWT token</label>
+							<input
+								value={token}
+								onChange={onTokenChange}
+								placeholder="Bearer token"
+								type="password"
 							/>
 						</div>
 						<div className="field form__actions">

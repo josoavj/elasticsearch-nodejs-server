@@ -29,6 +29,18 @@ module.exports = {
     pollIntervalMs: toNumber(process.env.WS_POLL_INTERVAL_MS, 2000),
     batchSize: toNumber(process.env.WS_BATCH_SIZE, 50),
   },
+  cors: {
+    origins: (process.env.CORS_ORIGINS || "")
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean),
+  },
+  auth: {
+    jwtRequired: toBoolean(process.env.JWT_REQUIRED, true),
+    jwtSecret: process.env.JWT_SECRET || "",
+    jwtIssuer: process.env.JWT_ISSUER,
+    jwtAudience: process.env.JWT_AUDIENCE,
+  },
   es: {
     node: process.env.ES_NODE || "https://localhost:9200",
     username: process.env.ES_USERNAME,

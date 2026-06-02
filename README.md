@@ -70,6 +70,11 @@ Then set the following variables:
 | `ES_PASSWORD` | Basic auth password | ✅ *(or API key)* |
 | `ES_CA_CERT_PATH` | Path to TLS CA certificate | optional |
 | `ES_REJECT_UNAUTHORIZED` | Reject unauthorized TLS (default: `true`) | optional |
+| `CORS_ORIGINS` | Allowed origins (comma-separated) | optional |
+| `JWT_REQUIRED` | Enforce JWT on API routes | optional |
+| `JWT_SECRET` | JWT signing secret (HS256) | ✅ if JWT enabled |
+| `JWT_ISSUER` | JWT issuer | optional |
+| `JWT_AUDIENCE` | JWT audience | optional |
 | `ES_REQUEST_TIMEOUT` | ES request timeout in ms | optional |
 | `ES_MAX_RETRIES` | ES retry count | optional |
 | `ES_SNIFF_ON_START` | Enable sniff on start | optional |
@@ -138,6 +143,8 @@ DOTENV_KEY=your_vault_key npm run vault:run -- node server/elasticsearch.js
 GET /api/health
 ```
 
+JWT-protected routes require `Authorization: Bearer <token>`.
+
 ### List indices
 
 ```
@@ -186,6 +193,36 @@ ws://localhost:3000/api/stream?index=filebeat-*&q=error
 ```
 
 Optional parameters: `fields`, `mode`, `sortField`, `sortOrder`, `normalize`.
+
+---
+
+## 🔐 Security (JWT + HTTPS)
+
+### JWT
+
+Set `JWT_REQUIRED=true` and configure `JWT_SECRET` (plus optional issuer/audience).
+Tokens must be sent in the `Authorization` header.
+
+### HTTPS (Nginx)
+
+Use a reverse proxy for TLS termination:
+
+```nginx
+server {
+	listen 443 ssl;
+	server_name networkmonigoring.elasticsearch.mg;
+
+	ssl_certificate /etc/letsencrypt/live/networkmonigoring.elasticsearch.mg/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/live/networkmonigoring.elasticsearch.mg/privkey.pem;
+
+	location / {
+		proxy_pass http://127.0.0.1:3000;
+		proxy_set_header Host $host;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+	}
+}
+```
 
 ---
 

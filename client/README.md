@@ -23,6 +23,11 @@ The app runs on http://localhost:3000 by default.
 The client proxies API calls to the server via `proxy` in [client/package.json](package.json).
 If your server runs on a different host/port, update that value.
 
+### JWT token
+
+When JWT is enabled on the server, paste a valid token in the "JWT token" field inside the UI.
+The client stores it in local storage and sends it as `Authorization: Bearer <token>`.
+
 ## Build
 
 ```bash
